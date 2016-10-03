@@ -1,0 +1,214 @@
+Imports System.Speech.Synthesis
+Imports AForge.Video.DirectShow
+Imports Emgu.CV
+Imports Emgu.CV.Structure
+Imports System.Drawing
+
+
+Public Class Form1
+    Dim WithEvents videoSource As VideoCaptureDevice
+    Dim picture As Bitmap
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        Dim synthesizer As New SpeechSynthesizer()
+        synthesizer.SelectVoiceByHints(VoiceGender.Female, VoiceAge.Adult)
+        synthesizer.Rate = 1
+        synthesizer.Volume = 100
+        synthesizer.Speak(TextBox1.Text)
+    End Sub
+
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        TextBox1.Text = Nothing
+    End Sub
+
+    Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+        TextBox1.Text = TextBox1.Text & "Q"
+    End Sub
+
+    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+        TextBox1.Text = TextBox1.Text & "W"
+    End Sub
+
+    Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+        TextBox1.Text = TextBox1.Text & "E"
+    End Sub
+
+    Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+        TextBox1.Text = TextBox1.Text & "R"
+    End Sub
+
+    Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
+        TextBox1.Text = TextBox1.Text & "T"
+    End Sub
+
+    Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
+        TextBox1.Text = TextBox1.Text & "Y"
+    End Sub
+
+    Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
+        TextBox1.Text = TextBox1.Text & "U"
+    End Sub
+
+    Private Sub Button10_Click(sender As Object, e As EventArgs) Handles Button10.Click
+        TextBox1.Text = TextBox1.Text & "I"
+    End Sub
+
+    Private Sub Button11_Click(sender As Object, e As EventArgs) Handles Button11.Click
+        TextBox1.Text = TextBox1.Text & "O"
+    End Sub
+
+    Private Sub Button12_Click(sender As Object, e As EventArgs) Handles Button12.Click
+        TextBox1.Text = TextBox1.Text & "P"
+    End Sub
+
+    Private Sub Button13_Click(sender As Object, e As EventArgs) Handles Button13.Click
+        TextBox1.Text = TextBox1.Text & "A"
+    End Sub
+
+    Private Sub Button14_Click(sender As Object, e As EventArgs) Handles Button14.Click
+        TextBox1.Text = TextBox1.Text & "S"
+    End Sub
+
+    Private Sub Button15_Click(sender As Object, e As EventArgs) Handles Button15.Click
+        TextBox1.Text = TextBox1.Text & "D"
+    End Sub
+
+    Private Sub Button16_Click(sender As Object, e As EventArgs) Handles Button16.Click
+        TextBox1.Text = TextBox1.Text & "F"
+    End Sub
+
+    Private Sub Button17_Click(sender As Object, e As EventArgs) Handles Button17.Click
+        TextBox1.Text = TextBox1.Text & "G"
+    End Sub
+
+    Private Sub Button18_Click(sender As Object, e As EventArgs) Handles Button18.Click
+        TextBox1.Text = TextBox1.Text & "H"
+    End Sub
+
+    Private Sub Button19_Click(sender As Object, e As EventArgs) Handles Button19.Click
+        TextBox1.Text = TextBox1.Text & "J"
+    End Sub
+
+    Private Sub Button20_Click(sender As Object, e As EventArgs) Handles Button20.Click
+        TextBox1.Text = TextBox1.Text & "K"
+    End Sub
+
+    Private Sub Button21_Click(sender As Object, e As EventArgs) Handles Button21.Click
+        TextBox1.Text = TextBox1.Text & "L"
+    End Sub
+
+    Private Sub Button22_Click(sender As Object, e As EventArgs) Handles Button22.Click
+        TextBox1.Text = TextBox1.Text & "Z"
+    End Sub
+
+    Private Sub Button23_Click(sender As Object, e As EventArgs) Handles Button23.Click
+        TextBox1.Text = TextBox1.Text & "X"
+    End Sub
+
+    Private Sub Button24_Click(sender As Object, e As EventArgs) Handles Button24.Click
+        TextBox1.Text = TextBox1.Text & "C"
+    End Sub
+
+    Private Sub Button25_Click(sender As Object, e As EventArgs) Handles Button25.Click
+        TextBox1.Text = TextBox1.Text & "V"
+    End Sub
+
+    Private Sub Button26_Click(sender As Object, e As EventArgs) Handles Button26.Click
+        TextBox1.Text = TextBox1.Text & "B"
+    End Sub
+
+    Private Sub Button27_Click(sender As Object, e As EventArgs) Handles Button27.Click
+        TextBox1.Text = TextBox1.Text & "N"
+    End Sub
+
+    Private Sub Button28_Click(sender As Object, e As EventArgs) Handles Button28.Click
+        TextBox1.Text = TextBox1.Text & "M"
+    End Sub
+
+    Private Sub Button29_Click(sender As Object, e As EventArgs) Handles Button29.Click
+        TextBox1.Text = TextBox1.Text & " "
+    End Sub
+
+    Private Sub Button30_Click(sender As Object, e As EventArgs) Handles Button30.Click
+        If TextBox1.Text.Count > 0 Then TextBox1.Text = TextBox1.Text.Remove(TextBox1.Text.Count - 1)
+    End Sub
+    Private Sub videoSource_NewFrame(ByVal sender As Object, ByVal eventArgs As AForge.Video.NewFrameEventArgs) Handles videoSource.NewFrame
+        Dim sourceImage As Bitmap = eventArgs.Frame
+        picture = sourceImage.Clone
+        PictureBox1.Image = picture
+        face_detect()
+    End Sub
+    Private Sub Button31_Click(sender As Object, e As EventArgs) Handles Button31.Click
+        Dim videoDevices As FilterInfoCollection = New FilterInfoCollection(FilterCategory.VideoInputDevice)
+        For Each camera As FilterInfo In videoDevices
+            MessageBox.Show(camera.Name)
+            ' Select the Cam
+            videoSource = New VideoCaptureDevice(videoDevices(0).MonikerString)
+        Next
+
+        videoSource.Start()
+        Timer1.Enabled = True
+
+    End Sub
+
+
+    Private Sub Button32_Click(sender As Object, e As EventArgs) Handles Button32.Click
+        videoSource.Stop()
+        Timer1.Enabled = False
+    End Sub
+    Public Sub face_detect()
+        Dim bmp As Bitmap
+        Dim ColordImage As Image(Of Bgr, [Byte]) = New Image(Of Bgr, Byte)(picture)
+        'Load the object detector
+        Dim faceDetector As New CascadeClassifier("haarcascade_frontalface_default.xml")
+        'Convert the image to Grayscale
+        Dim grayImage As Image(Of Gray, [Byte]) = ColordImage.Convert(Of Gray, [Byte])()
+        For Each face As Rectangle In faceDetector.DetectMultiScale(
+                     grayImage,
+                     1.1,
+                     10,
+                     New Size(25, 20),
+                     Size.Empty)
+            CvInvoke.Rectangle(ColordImage, face, New MCvScalar(0, 0, 255))
+            Dim p As PointF = New PointF
+            p = face.Location
+            Dim size As String = face.Size.ToString
+            Dim x As Integer = p.X.ToString
+            Dim y As Integer = p.Y.ToString
+            Dim bmp1 As New Bitmap(Copy(grayImage.ToBitmap, face), New Size(150, 150))
+            bmp = bmp1
+        Next
+        Dim MyImage As Image = ColordImage.ToBitmap()
+        PictureBox1.Image = bmp
+
+
+    End Sub
+    Public Overloads Shared Function Copy(srcBitmap As Bitmap,
+  section As Rectangle) As Bitmap
+
+        ' Create the new bitmap and associated graphics object
+        Dim bmp As New Bitmap(section.Width, section.Height)
+        Dim g As Graphics = Graphics.FromImage(bmp)
+
+        ' Draw the specified section of the source bitmap to the new one
+        g.DrawImage(srcBitmap, 0, 0, section, GraphicsUnit.Pixel)
+
+        ' Clean up
+        g.Dispose()
+
+        ' Return the bitmap
+        Return bmp
+
+    End Function 'Copy
+
+
+    Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
+
+        If picture Is Nothing Then
+            Exit Sub
+        Else
+            face_detect()
+        End If
+
+    End Sub
+
+End Class​
